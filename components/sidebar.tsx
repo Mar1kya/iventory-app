@@ -1,3 +1,4 @@
+import { UserButton } from '@stackframe/stack';
 import { BarChart3, Package, Plus, Settings } from 'lucide-react'
 import Link from 'next/link'
 export default function SideBar({ currentPath = '/dashboard' }: { currentPath: string }) {
@@ -15,7 +16,7 @@ export default function SideBar({ currentPath = '/dashboard' }: { currentPath: s
             name: 'Settings', href: '/settings', icon: Settings,
         }
     ]
-    return <div className="fix left-0 top-0 bg-black text-white w-64 min-h-screen p-6 z-10">
+    return <div className="fix left-0 top-0 bg-black text-white w-64 min-h-screen p-6 z-10 relative">
         <div className="mb-8">
             <div className="flex items-center space-x-2 mb-4">
                 <BarChart3 className='w-7 h-7' />
@@ -35,5 +36,10 @@ export default function SideBar({ currentPath = '/dashboard' }: { currentPath: s
                 </Link>
             })}
         </nav>
+        <div className='absolute bottom-0 left-0 right-0 p-6 border-t border-gray-400'>
+            <div className='flex items-center justify-between [&_button:hover]:!bg-transparent [&_button:hover]:!opacity-100'>
+                <UserButton showUserInfo />
+            </div>
+        </div>
     </div>
 }
