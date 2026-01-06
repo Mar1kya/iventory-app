@@ -7,7 +7,25 @@ export default async function DashBoardPage() {
     const totalProducts = await prisma.product.count({
         where: { userId: id }
     })
-    console.log(totalProducts)
+    const lowStock = await prisma.product.count({
+        where: {
+            userId: id
+        }
+    })
+    const recent = await prisma.product.findMany({
+        where: {
+            userId: id,
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+    })
+    const allProducts = await prisma.product.findMany({
+        where: {
+            userId: id,
+        },
+        select: { price: true, quantity: true, createdAt: true }
+    })
+    const totalValue = allProducts.reduce((sum, product) => sum + Number(product.price) * Number(product.quantity), 0)
     return <div className="min-h-screen bg-gray-50">
         <SideBar currentPath="/dashboard" />
         <main className="ml-64 p-8">
