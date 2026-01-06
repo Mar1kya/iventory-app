@@ -4,83 +4,108 @@ import StockLevels from "@/components/dashboard/stock-levels";
 import SideBar from "@/components/sidebar";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import Efficiency from "@/components/dashboard/efficiency";
 
 export default async function DashBoardPage() {
     const { id } = await getCurrentUser();
 
-    const [totalProducts, lowStock, allProducts] = await Promise.all([
-        await prisma.product.count({
-            where: { userId: id }
-        }),
-        await prisma.product.count({
-            where: {
-                userId: id,
-                lowStockAt: { not: null },
-                quantity: { lte: 5 }
+    const [allProducts, recent] = await Promise.all([
+        prisma.product.findMany({
+            where: { userId: id },
+            select: {    
+                price: true,
+                quantity: true,
+                createdAt: true
             }
         }),
-        await prisma.product.findMany({
-            where: {
-                userId: id,
-            },
-            select: { price: true, quantity: true, createdAt: true }
+        prisma.product.findMany({
+            where: { userId: id },
+            orderBy: { createdAt: 'desc' },
+            take: 5,
         })
-    ])
+    ]);
 
-    const totalValue = allProducts.reduce((sum, product) => sum + Number(product.price) * Number(product.quantity), 0)
+    const stats = allProducts.reduce((acc, product) => {
+        const qty = Number(product.quantity);
+        const price = Number(product.price);
 
-   const now = new Date()
-    const weeklyProductsData = []
+        acc.totalValue += price * qty;
+
+        if (qty === 0) {
+            acc.outOfStock++;
+        } else if (qty <= 5) {
+            acc.lowStock++;
+        } else {
+            acc.inStock++;
+        }
+
+        return acc;
+    }, { totalValue: 0, lowStock: 0, outOfStock: 0, inStock: 0 });
+
+    const totalProducts = allProducts.length;
+
+    const inStockPercentage = totalProducts > 0 ? Math.round((stats.inStock / totalProducts) * 100) : 0;
+    const lowStockPercentage = totalProducts > 0 ? Math.round((stats.lowStock / totalProducts) * 100) : 0;
+    const outStockPercentage = totalProducts > 0 ? Math.round((stats.outOfStock / totalProducts) * 100) : 0;
+
+    const now = new Date();
+    const weeklyProductsData = [];
 
     for (let i = 11; i >= 0; i--) {
         const weekStart = new Date(now);
-        weekStart.setDate(weekStart.getDate() - i * 7) 
-        weekStart.setHours(0, 0, 0, 0) 
+        weekStart.setDate(weekStart.getDate() - i * 7);
+        weekStart.setHours(0, 0, 0, 0);
 
         const weekEnd = new Date(weekStart);
-        weekEnd.setDate(weekStart.getDate() + 6) 
-        weekEnd.setHours(23, 59, 59, 999) 
+        weekEnd.setDate(weekStart.getDate() + 6);
+        weekEnd.setHours(23, 59, 59, 999);
 
         const day = String(weekStart.getDate()).padStart(2, '0');
         const month = String(weekStart.getMonth() + 1).padStart(2, '0');
-        const weekLabel = `${day}/${month}`; 
+        const weekLabel = `${day}/${month}`;
 
-        const weekProducts = allProducts.filter((product) => {
-            const productDate = new Date(product.createdAt) 
-            return productDate >= weekStart && productDate <= weekEnd
-        })
+        const count = allProducts.filter((product) => {
+            const productDate = new Date(product.createdAt);
+            return productDate >= weekStart && productDate <= weekEnd;
+        }).length;
 
         weeklyProductsData.push({
             week: weekLabel,
-            products: weekProducts.length
-        })
+            products: count
+        });
     }
 
-    const recent = await prisma.product.findMany({
-        where: {
-            userId: id,
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 5,
-    })
-    return <div className="min-h-screen bg-gray-50">
-        <SideBar currentPath="/dashboard" />
-        <main className="ml-64 p-8">
-            <header className="mb-8">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-                        <p className="text-sm text-gray-500">Welcome back! Here is an overview of your inventory.</p>
+    return (
+        <div className="min-h-screen bg-gray-50">
+            <SideBar currentPath="/dashboard" />
+            <main className="ml-64 p-8">
+                <header className="mb-8">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+                            <p className="text-sm text-gray-500">Welcome back! Here is an overview of your inventory.</p>
+                        </div>
                     </div>
+                </header>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <KeyMetrics 
+                        totalProducts={totalProducts} 
+                        totalValue={stats.totalValue} 
+                        lowStock={stats.lowStock} 
+                    />
+                    <ProductsChart data={weeklyProductsData} />
                 </div>
-            </header>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <KeyMetrics totalProducts={totalProducts} totalValue={totalValue} lowStock={lowStock} />
-                <ProductsChart data={weeklyProductsData} />
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <StockLevels recent={recent} />
-            </div>
-        </main>
-    </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <StockLevels recent={recent} />
+                    <Efficiency 
+                        inStockPercentage={inStockPercentage} 
+                        lowStockPercentage={lowStockPercentage} 
+                        outOfStockPercentage={outStockPercentage}
+                    />
+                </div>
+            </main>
+        </div>
+    );
 }
