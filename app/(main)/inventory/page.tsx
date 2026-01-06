@@ -2,9 +2,12 @@ import TableInventory from "@/components/inventory/table-inventory";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma"
 
-export default async function InventoryPage({ }) {
+export default async function InventoryPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
     const { id } = await getCurrentUser();
-    const totalProducts = await prisma.product.findMany({ where: { userId: id } })
+    const params = await searchParams;
+    const q = (params.q ?? '').trim();
+    const totalProducts = await prisma.product.findMany({ where: { userId: id, name: { contains: q, mode: "insensitive" } } })
+
     return <>
         <header className="mb-8">
             <div className="flex items-center justify-between">
@@ -14,6 +17,6 @@ export default async function InventoryPage({ }) {
                 </div>
             </div>
         </header>
-       <TableInventory totalProducts={totalProducts}/>
+        <TableInventory totalProducts={totalProducts} />
     </>
 } 

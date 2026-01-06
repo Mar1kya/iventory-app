@@ -1,3 +1,4 @@
+import Form from 'next/form'
 import { deleteProduct } from "@/lib/actions/products"
 import { type Product } from "@/lib/types"
 
@@ -6,8 +7,14 @@ type TableInventoryProps = {
 }
 
 export default function TableInventory({ totalProducts }: TableInventoryProps) {
-    return <section className="space-y">
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    return <main className="space-y-6">
+        <section className="bg-white rounded-lg border border-gray-200 p-6">
+            <Form className="flex gap-2" action="/inventory" >
+                <input name="q" placeholder="Search products..." className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:border-transparent" />
+                <button className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-900">Search</button>
+            </Form>
+        </section>
+        <section className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             <table className="w-full">
                 <thead className="bg-gray-50">
                     <tr>
@@ -37,6 +44,6 @@ export default function TableInventory({ totalProducts }: TableInventoryProps) {
                     })}
                 </tbody>
             </table>
-        </div>
-    </section>
+        </section>
+    </main>
 }
