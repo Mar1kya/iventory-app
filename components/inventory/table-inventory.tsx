@@ -1,3 +1,4 @@
+import { deleteProduct } from "@/lib/actions/products"
 import { type Product } from "@/lib/types"
 
 type TableInventoryProps = {
@@ -19,15 +20,21 @@ export default function TableInventory({ totalProducts }: TableInventoryProps) {
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                    {totalProducts.map((product, key) => (
-                        <tr key={key} className="hover:bg-gray-50">
+                    {totalProducts.map((product) => {
+                        const deleteProductById = deleteProduct.bind(null, product.id);
+                        return <tr key={product.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 text-left text-sm text-gray-500">{product.name}</td>
                             <td className="px-6 py-4 text-left text-sm text-gray-500">{product.sku || '-'}</td>
                             <td className="px-6 py-4 text-left text-sm text-gray-500">${Number(product.price).toFixed(2)}</td>
                             <td className="px-6 py-4 text-left text-sm text-gray-500">{product.quantity}</td>
                             <td className="px-6 py-4 text-left text-sm text-gray-500">{product.lowStockAt || '-'}</td>
+                            <td className="px-6 py-4 text-sm text-gray-50">
+                                <form action={deleteProductById}>
+                                    <button className="text-red-600 hover:text-red-900">Delete</button>
+                                </form>
+                            </td>
                         </tr>
-                    ))}
+                    })}
                 </tbody>
             </table>
         </div>
