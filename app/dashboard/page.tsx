@@ -1,4 +1,5 @@
 import KeyMetrics from "@/components/dashboard/key-metrics";
+import StockLevels from "@/components/dashboard/stock-levels";
 import SideBar from "@/components/sidebar";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -6,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 export default async function DashBoardPage() {
     const { id } = await getCurrentUser();
 
-    const [totalProducts, lowStock, allProducts ] = await Promise.all([
+    const [totalProducts, lowStock, allProducts] = await Promise.all([
         await prisma.product.count({
             where: { userId: id }
         }),
@@ -24,7 +25,7 @@ export default async function DashBoardPage() {
             select: { price: true, quantity: true, createdAt: true }
         })
     ])
-   
+
     const recent = await prisma.product.findMany({
         where: {
             userId: id,
@@ -47,7 +48,9 @@ export default async function DashBoardPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <KeyMetrics totalProducts={totalProducts} totalValue={totalValue} lowStock={lowStock} />
             </div>
-            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <StockLevels recent={recent}/>
+            </div>
         </main>
     </div>
 }
