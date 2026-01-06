@@ -1,13 +1,16 @@
+"use client"
 import { UserButton } from '@stackframe/stack';
 import { BarChart3, Package, Plus, Settings } from 'lucide-react'
 import Link from 'next/link'
-export default function SideBar({ currentPath = '/dashboard' }: { currentPath: string }) {
+import { usePathname } from 'next/navigation';
+export default function SideBar() {
+    const pathname = usePathname();
     const navigation = [
         {
             name: 'Dashboard', href: '/dashboard', icon: BarChart3,
         },
         {
-            name: 'Iventory', href: '/inventory', icon: Package,
+            name: 'Inventory', href: '/inventory', icon: Package,
         },
         {
             name: 'Add Product', href: '/add-product', icon: Plus,
@@ -29,7 +32,7 @@ export default function SideBar({ currentPath = '/dashboard' }: { currentPath: s
             </div>
             {navigation.map((item, key) => {
                 const IconComponent = item.icon;
-                const isActive = currentPath === item.href;
+                const isActive = pathname === item.href;
                 return <Link href={item.href} key={key} className={`flex items-center space-x-3 py-2 px-3 rounded-lg ${isActive ? 'bg-gray-400 text-gray-800' : 'hover:bg-gray-400 hover:text-gray-800 text-gray-300'}`}>
                     <IconComponent className='w-5 h-5' />
                     <span className='text-sm'>{item.name}</span>

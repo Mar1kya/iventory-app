@@ -1,7 +1,6 @@
 import ProductsChart from "@/components/dashboard/products-chart";
 import KeyMetrics from "@/components/dashboard/key-metrics";
 import StockLevels from "@/components/dashboard/stock-levels";
-import SideBar from "@/components/sidebar";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Efficiency from "@/components/dashboard/efficiency";
@@ -12,7 +11,7 @@ export default async function DashBoardPage() {
     const [allProducts, recent] = await Promise.all([
         prisma.product.findMany({
             where: { userId: id },
-            select: {    
+            select: {
                 price: true,
                 quantity: true,
                 createdAt: true
@@ -76,36 +75,31 @@ export default async function DashBoardPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <SideBar currentPath="/dashboard" />
-            <main className="ml-64 p-8">
-                <header className="mb-8">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-                            <p className="text-sm text-gray-500">Welcome back! Here is an overview of your inventory.</p>
-                        </div>
+        <>
+            <header className="mb-8">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+                        <p className="text-sm text-gray-500">Welcome back! Here is an overview of your inventory.</p>
                     </div>
-                </header>
-                
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    <KeyMetrics 
-                        totalProducts={totalProducts} 
-                        totalValue={stats.totalValue} 
-                        lowStock={stats.lowStock} 
-                    />
-                    <ProductsChart data={weeklyProductsData} />
                 </div>
-                
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    <StockLevels recent={recent} />
-                    <Efficiency 
-                        inStockPercentage={inStockPercentage} 
-                        lowStockPercentage={lowStockPercentage} 
-                        outOfStockPercentage={outStockPercentage}
-                    />
-                </div>
-            </main>
-        </div>
+            </header>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <KeyMetrics
+                    totalProducts={totalProducts}
+                    totalValue={stats.totalValue}
+                    lowStock={stats.lowStock}
+                />
+                <ProductsChart data={weeklyProductsData} />
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <StockLevels recent={recent} />
+                <Efficiency
+                    inStockPercentage={inStockPercentage}
+                    lowStockPercentage={lowStockPercentage}
+                    outOfStockPercentage={outStockPercentage}
+                />
+            </div>
+        </>
     );
 }
