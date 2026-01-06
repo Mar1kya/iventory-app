@@ -1,3 +1,4 @@
+import ProductsChart from "@/components/dashboard/products-chart";
 import KeyMetrics from "@/components/dashboard/key-metrics";
 import StockLevels from "@/components/dashboard/stock-levels";
 import SideBar from "@/components/sidebar";
@@ -26,6 +27,35 @@ export default async function DashBoardPage() {
         })
     ])
 
+    const totalValue = allProducts.reduce((sum, product) => sum + Number(product.price) * Number(product.quantity), 0)
+
+   const now = new Date()
+    const weeklyProductsData = []
+
+    for (let i = 11; i >= 0; i--) {
+        const weekStart = new Date(now);
+        weekStart.setDate(weekStart.getDate() - i * 7) 
+        weekStart.setHours(0, 0, 0, 0) 
+
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6) 
+        weekEnd.setHours(23, 59, 59, 999) 
+
+        const day = String(weekStart.getDate()).padStart(2, '0');
+        const month = String(weekStart.getMonth() + 1).padStart(2, '0');
+        const weekLabel = `${day}/${month}`; 
+
+        const weekProducts = allProducts.filter((product) => {
+            const productDate = new Date(product.createdAt) 
+            return productDate >= weekStart && productDate <= weekEnd
+        })
+
+        weeklyProductsData.push({
+            week: weekLabel,
+            products: weekProducts.length
+        })
+    }
+
     const recent = await prisma.product.findMany({
         where: {
             userId: id,
@@ -33,7 +63,6 @@ export default async function DashBoardPage() {
         orderBy: { createdAt: 'desc' },
         take: 5,
     })
-    const totalValue = allProducts.reduce((sum, product) => sum + Number(product.price) * Number(product.quantity), 0)
     return <div className="min-h-screen bg-gray-50">
         <SideBar currentPath="/dashboard" />
         <main className="ml-64 p-8">
@@ -47,9 +76,10 @@ export default async function DashBoardPage() {
             </header>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <KeyMetrics totalProducts={totalProducts} totalValue={totalValue} lowStock={lowStock} />
+                <ProductsChart data={weeklyProductsData} />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <StockLevels recent={recent}/>
+                <StockLevels recent={recent} />
             </div>
         </main>
     </div>
