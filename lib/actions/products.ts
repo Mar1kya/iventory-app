@@ -22,7 +22,7 @@ export async function deleteProduct(id: string) {
   revalidatePath("/dashboard");
 }
 
-export async function createProduct(formData: FormData) {
+export async function createProduct(_prevState: any, formData: FormData) {
   const user = await getCurrentUser();
   const parsed = ProductSchema.safeParse({
     name: formData.get("name"),
@@ -32,7 +32,12 @@ export async function createProduct(formData: FormData) {
     lowStockAt: formData.get("lowStockAt") || undefined,
   });
   if (!parsed.success) {
-    throw new Error("Validation failed");
+    const flattened = z.flattenError(parsed.error);
+
+    return {
+      errors: flattened.fieldErrors,
+      message: "Please fix the errors below.",
+    };
   }
   try {
     await prisma.product.create({
