@@ -1,16 +1,6 @@
-import { type Decimal } from "@prisma/client/runtime/client"
+import { Product } from "@/lib/types";
 type stockLevelsProps = {
-    recent: {
-        id: string;
-        name: string;
-        userId: string;
-        sku: string | null;
-        price: Decimal;
-        quantity: number;
-        lowStockAt: number | null;
-        createdAt: Date;
-        updatedAt: Date;
-    }[]
+    recent: Product[]
 }
 export default function StockLevels({ recent }: stockLevelsProps) {
     return <section className="bg-white rounded-lg border border-gray-200 p-6">
