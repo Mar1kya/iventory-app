@@ -6,7 +6,6 @@ type productsChartProps = {
     products: number,
 }
 export default function ProductsChart({ data }: { data: productsChartProps[] }) {
-    console.log(data)
     return <section className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-6">New products per week</h2>

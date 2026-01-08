@@ -1,6 +1,7 @@
 import FormProduct from "@/components/form-product";
-
+import { getCurrentUser } from "@/lib/auth";
 export default async function AddProductPage() {
+    const { } = await getCurrentUser()
     return <>
         <header className="mb-8">
             <div className="flex items-center justify-between">
