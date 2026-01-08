@@ -23,12 +23,12 @@ export default function SideBar() {
         <div className="mb-8">
             <div className="flex items-center space-x-2 mb-4">
                 <BarChart3 className='w-7 h-7' />
-                <span className='text-lg font-semibold'>Iventory App</span>
+                <span className='text-lg font-semibold'>Inventory App</span>
             </div>
         </div>
         <nav className='space-y-1'>
             <div className='text-sm font-semibold text-gray-400 uppercase'>
-                Iventory
+                Inventory
             </div>
             {navigation.map((item, key) => {
                 const IconComponent = item.icon;
