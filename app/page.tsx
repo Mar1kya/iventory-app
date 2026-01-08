@@ -1,6 +1,8 @@
+import { getUser } from "@/lib/auth";
 import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
+  const user = await getUser();
   return (
     <div className="min-h-screen bg-linear-to-br from-purple-50 to-purple-100 flex items-center justify-center">
       <div className="container mx-auto px-4 py-16">
@@ -15,10 +17,10 @@ export default function Home() {
           </p>
           <div className="flex justify-center">
             <Link
-              href="/sign-in"
+              href={user ? '/dashboard' : '/sign-in'}
               className="bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-900 transition-colors"
             >
-              Sign In
+              {user ? 'Dashboard' : 'Sign In'}
             </Link>
           </div>
         </div>
