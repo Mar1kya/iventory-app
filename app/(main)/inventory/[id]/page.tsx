@@ -1,3 +1,4 @@
+import EditProductForm from "@/components/edit-form";
 import { getProductById } from "@/lib/actions/products";
 import { getCurrentUser } from "@/lib/auth";
 import { notFound } from "next/navigation";
@@ -12,8 +13,10 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
     if (!product) {
         return notFound();
     }
-    console.log(product);
-
+    const plainProduct = {
+        ...product,
+        price: product.price.toNumber(), 
+    };
     return <>
         <header className="mb-8 my-8">
             <div className="flex items-center justify-between">
@@ -25,6 +28,7 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
         </header>
         <div className="max-w-2xl">
             <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <EditProductForm product={plainProduct}/>
             </div>
         </div>
     </>

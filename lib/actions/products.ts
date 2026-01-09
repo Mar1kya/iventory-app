@@ -57,3 +57,40 @@ export async function createProduct(_prevState: any, formData: FormData) {
   revalidatePath("/dashboard");
   redirect("/inventory");
 }
+
+export async function editProduct(
+  id: string,
+  _prevState: any,
+  formData: FormData
+) {
+  const user = await getCurrentUser();
+  const parsed = ProductSchema.safeParse({
+    name: formData.get("name"),
+    price: formData.get("price"),
+    quantity: formData.get("quantity"),
+    sku: formData.get("sku") || undefined,
+    lowStockAt: formData.get("lowStockAt") || undefined,
+  });
+  if (!parsed.success) {
+    const flattened = z.flattenError(parsed.error);
+
+    return {
+      errors: flattened.fieldErrors,
+      message: "Please fix the errors below.",
+    };
+  }
+  try {
+    await prisma.product.update({
+      where: {
+        id,
+        userId: user.id,
+      },
+      data: parsed.data,
+    });
+  } catch (error) {
+    throw new Error("Failed to update product.");
+  }
+  revalidatePath("/inventory");
+  revalidatePath("/dashboard");
+  redirect("/inventory");
+}

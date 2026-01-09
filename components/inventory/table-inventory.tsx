@@ -1,12 +1,13 @@
 import Form from 'next/form'
 import { deleteProduct } from "@/lib/actions/products"
 import { type Product } from "@/lib/types"
+import Link from 'next/link'
 
 type TableInventoryProps = {
     totalProducts: Product[],
 }
 
-export default function TableInventory({ totalProducts}: TableInventoryProps) {
+export default function TableInventory({ totalProducts }: TableInventoryProps) {
     return <main className="space-y-6">
         <section className="bg-white rounded-lg border border-gray-200 p-6">
             <Form className="flex gap-2" action="/inventory" >
@@ -35,9 +36,10 @@ export default function TableInventory({ totalProducts}: TableInventoryProps) {
                             <td className="px-6 py-4 text-left text-sm text-gray-500">${Number(product.price).toFixed(2)}</td>
                             <td className="px-6 py-4 text-left text-sm text-gray-500">{product.quantity}</td>
                             <td className="px-6 py-4 text-left text-sm text-gray-500">{product.lowStockAt || '-'}</td>
-                            <td className="px-6 py-4 text-sm text-gray-50">
+                            <td className="px-6 py-4 text-sm text-gray-50 flex gap-2">
+                                <Link href={`inventory/${product.id}`} className='text-amber-400 hover:text-amber-500'>Edit</Link>
                                 <form action={deleteProductById}>
-                                    <button className="text-red-600 hover:text-red-900">Delete</button>
+                                    <button className="text-red-600 hover:text-red-900 cursor-pointer">Delete</button>
                                 </form>
                             </td>
                         </tr>
