@@ -13,6 +13,13 @@ const ProductSchema = z.object({
   lowStockAt: z.coerce.number().int().min(0).optional(),
 });
 
+export async function getProductById(productId: string, userId: string) {
+  const product = await prisma.product.findFirst({
+    where: { id: productId, userId },
+  });
+  return product;
+}
+
 export async function deleteProduct(id: string) {
   const user = await getCurrentUser();
   await prisma.product.deleteMany({
