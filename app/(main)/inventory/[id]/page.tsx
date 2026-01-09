@@ -3,6 +3,21 @@ import { getProductById } from "@/lib/actions/products";
 import { getCurrentUser } from "@/lib/auth";
 import { notFound } from "next/navigation";
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const user = await getCurrentUser();
+    const userId = user.id;
+
+    const product = await getProductById(id, userId);
+    if (!product) {
+        return notFound();
+    }
+    return {
+        title: product.name,
+        description: `Editing product "${product.name}". Changing price, balances, and characteristics.`
+    }
+}
+
 export default async function EditProduct({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const user = await getCurrentUser();
@@ -15,7 +30,7 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
     }
     const plainProduct = {
         ...product,
-        price: product.price.toNumber(), 
+        price: product.price.toNumber(),
     };
     return <>
         <header className="mb-8 my-8">
@@ -28,7 +43,7 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
         </header>
         <div className="max-w-2xl">
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <EditProductForm product={plainProduct}/>
+                <EditProductForm product={plainProduct} />
             </div>
         </div>
     </>

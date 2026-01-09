@@ -5,6 +5,11 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Efficiency from "@/components/dashboard/efficiency";
 
+export const metadata = {
+    title: 'Dashboard',
+    description: 'Comprehensive overview of your warehouse. Track key metrics, control inventory costs, and analyze performance in real time.'
+}
+
 export default async function DashBoardPage() {
     const { id } = await getCurrentUser();
 
