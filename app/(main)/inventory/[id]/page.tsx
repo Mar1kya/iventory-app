@@ -1,5 +1,6 @@
 import { getProductById } from "@/lib/actions/products";
 import { getCurrentUser } from "@/lib/auth";
+import { notFound } from "next/navigation";
 
 export default async function EditProduct({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -7,10 +8,14 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
     const userId = user.id;
 
     const product = await getProductById(id, userId);
+
+    if (!product) {
+        return notFound();
+    }
     console.log(product);
 
     return <>
-        <header className="mb-8">
+        <header className="mb-8 my-8">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-semibold text-gray-900">Edit Product</h1>

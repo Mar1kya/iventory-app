@@ -3,7 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 export default async function AddProductPage() {
     const { } = await getCurrentUser()
     return <>
-        <header className="mb-8">
+        <header className="py-8">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-semibold text-gray-900">Add Product</h1>
