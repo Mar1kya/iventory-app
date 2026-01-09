@@ -1,6 +1,11 @@
 import { getUser } from "@/lib/auth";
 import Link from "next/link";
 
+export const metadata = {
+  title: 'Home',
+  description: 'A convenient inventory management system for your business. Track products, control stock levels, and get real-time analytics.'
+}
+
 export default async function Home() {
   const user = await getUser();
   return (

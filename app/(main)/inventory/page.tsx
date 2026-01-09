@@ -3,6 +3,11 @@ import TableInventory from "@/components/inventory/table-inventory";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma"
 
+export const metadata = {
+    title: "Inventory",
+    description: "View and manage your complete product catalog. Track stock levels, search for products, and control your inventory."
+}
+
 export default async function InventoryPage({ searchParams }: { searchParams: Promise<{ q?: string, page?: string }> }) {
     const { id } = await getCurrentUser();
     const params = await searchParams;

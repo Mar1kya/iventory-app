@@ -1,5 +1,9 @@
 import FormProduct from "@/components/form-product";
 import { getCurrentUser } from "@/lib/auth";
+export const metadata = {
+    title: 'Add Product',
+    description: 'Add new items to your inventory catalog. Enter product details, set pricing, and establish initial stock levels.'
+}
 export default async function AddProductPage() {
     const { } = await getCurrentUser()
     return <>

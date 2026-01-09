@@ -1,8 +1,12 @@
 import { getCurrentUser } from "@/lib/auth"
 import { AccountSettings } from "@stackframe/stack"
+export const metadata = {
+    title: 'Settings',
+    description: 'Manage your account settings, update your profile information, and configure security preferences.'
+}
 
 export default async function SettingsPage() {
-    const {} = await getCurrentUser()
+    const { } = await getCurrentUser()
     return <>
         <header className="py-8">
             <div className="flex items-center justify-between">
@@ -14,7 +18,7 @@ export default async function SettingsPage() {
         </header>
         <div className="max-w-6xl">
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <AccountSettings fullPage/>
+                <AccountSettings fullPage />
             </div>
         </div>
     </>
