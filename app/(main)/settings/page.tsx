@@ -4,7 +4,7 @@ import { AccountSettings } from "@stackframe/stack"
 export default async function SettingsPage() {
     const {} = await getCurrentUser()
     return <>
-        <header className="mb-8">
+        <header className="py-8">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>

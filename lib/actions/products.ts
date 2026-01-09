@@ -13,6 +13,13 @@ const ProductSchema = z.object({
   lowStockAt: z.coerce.number().int().min(0).optional(),
 });
 
+export async function getProductById(productId: string, userId: string) {
+  const product = await prisma.product.findFirst({
+    where: { id: productId, userId },
+  });
+  return product;
+}
+
 export async function deleteProduct(id: string) {
   const user = await getCurrentUser();
   await prisma.product.deleteMany({
@@ -45,6 +52,43 @@ export async function createProduct(_prevState: any, formData: FormData) {
     });
   } catch (error) {
     throw new Error("Failed to create product.");
+  }
+  revalidatePath("/inventory");
+  revalidatePath("/dashboard");
+  redirect("/inventory");
+}
+
+export async function editProduct(
+  id: string,
+  _prevState: any,
+  formData: FormData
+) {
+  const user = await getCurrentUser();
+  const parsed = ProductSchema.safeParse({
+    name: formData.get("name"),
+    price: formData.get("price"),
+    quantity: formData.get("quantity"),
+    sku: formData.get("sku") || undefined,
+    lowStockAt: formData.get("lowStockAt") || undefined,
+  });
+  if (!parsed.success) {
+    const flattened = z.flattenError(parsed.error);
+
+    return {
+      errors: flattened.fieldErrors,
+      message: "Please fix the errors below.",
+    };
+  }
+  try {
+    await prisma.product.update({
+      where: {
+        id,
+        userId: user.id,
+      },
+      data: parsed.data,
+    });
+  } catch (error) {
+    throw new Error("Failed to update product.");
   }
   revalidatePath("/inventory");
   revalidatePath("/dashboard");

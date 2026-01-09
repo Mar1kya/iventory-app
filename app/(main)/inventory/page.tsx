@@ -31,7 +31,7 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
     const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
 
     return <>
-        <header className="mb-8">
+        <header className="py-8">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-semibold text-gray-900">Inventory</h1>

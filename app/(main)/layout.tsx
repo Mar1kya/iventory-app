@@ -6,6 +6,6 @@ export default function MainLayout({
 }>) {
     return <div className="min-h-screen bg-gray-50">
         <SideBar />
-        <main className="ml-64 p-8">{children}</main>
+        <main className="ml-64 px-8">{children}</main>
     </div>
 }
